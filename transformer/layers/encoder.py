@@ -33,6 +33,8 @@ class Encoder(tf.keras.layers.Layer):
 		# TODO: Normalize embedded_q
 		embedded_q = self.word_embedding(q)
 
+		embedded_q *= tf.math.sqrt(tf.cast(self.d_model, tf.float32))
+
 		# positional_encoding shape: (1, q_length, d_model)
 		positional_encoding = generate_positional_encoding(q_length, self.d_model)
 

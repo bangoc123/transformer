@@ -20,8 +20,8 @@ if __name__ == "__main__":
     parser.add_argument("--buffer-size", default=64, type=str)
     parser.add_argument("--batch-size", default=64, type=int)
     parser.add_argument("--epochs", default=1000, type=int)
-    parser.add_argument("--max-length", default=50, type=int)
-    parser.add_argument("--num-examples", default=5000, type=int)
+    parser.add_argument("--max-length", default=40, type=int)
+    parser.add_argument("--num-examples", default=300, type=int)
     parser.add_argument("--d-model", default=512, type=int)
     parser.add_argument("--n", default=6, type=int)
     parser.add_argument("--h", default=8, type=int)
@@ -62,7 +62,8 @@ if __name__ == "__main__":
     inp_vocab_size = len(inp_tokenizer.word_counts) + 2
     targ_vocab_size = len(inp_tokenizer.word_counts) + 2
 
-    transformer = Transformer(
+    # Initializing model
+    transformer = Transformer(  
         args.n, 
         args.h, 
         inp_vocab_size, 
@@ -76,8 +77,7 @@ if __name__ == "__main__":
         loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=True)
     )
 
-    # transformer.summary()
-
+    # Training model
     transformer.fit(
         train_dataset.take(1), epochs=args.epochs,
     )

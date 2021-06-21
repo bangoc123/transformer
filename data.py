@@ -31,9 +31,7 @@ class NMTDataset:
     # Padding
 
     tensor = lang_tokenizer.texts_to_sequences(lang)
-    # print('---------->', tensor, lang)
     tensor = tf.keras.preprocessing.sequence.pad_sequences(tensor, padding='post', maxlen=max_length)
-    # print('---------->', tensor, lang)
     return tensor, lang_tokenizer
 
 
@@ -48,8 +46,6 @@ class NMTDataset:
     inp_tensor, inp_tokenizer = self.tokenize(inp_lines, max_length)
     targ_tensor, targ_tokenizer = self.tokenize(targ_lines, max_length)
 
-    # print(inp_tensor)
-    
     return inp_tensor, targ_tensor, inp_tokenizer, targ_tokenizer
 
   def build_dataset(self, inp_path, targ_path, buffer_size, batch_size, max_length, num_examples):

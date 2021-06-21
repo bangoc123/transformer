@@ -43,7 +43,6 @@ class Transformer(tf.keras.models.Model):
 
 	
 	def loss_function(self, real, pred):
-		print('-------)))---->', real, pred)
 		mask = tf.math.logical_not(real == 0)
 		loss = loss_object(real, pred)
 
@@ -63,12 +62,8 @@ class Transformer(tf.keras.models.Model):
 		
 		with tf.GradientTape() as tape:
 			preds = self(in_data, True)
-			# tf.print(preds)
-
 			d_loss = self.loss_fn(tar_real, preds)
 
-			print('------d_loss----------->', d_loss)
-		
 		# Compute gradients
 		grads = tape.gradient(d_loss, self.trainable_variables)
 
