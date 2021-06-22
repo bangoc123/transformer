@@ -62,7 +62,7 @@ Example: You want to build English-Vietnamese machine translation in 10 epochs
 
 
 ```bash
-python train.py --epochs 10 --input-lang en --target-lang vi --input-path ./data/mock/train.en --target-path ./data/mock/train.en
+python train.py --epochs 10 --input-lang en --target-lang vi --input-path ./data/mock/train.en --target-path ./data/mock/train.vi
 ```
 
 There are some `important` arguments for the script you should consider when running it:
