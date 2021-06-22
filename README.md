@@ -98,7 +98,7 @@ After training successfully, your model will be saved to `model-folder` defined 
 
     - Reading files Pipeline (Release Time: 06/07/2021)
     - Adapting BPE, Subwords Tokenizer (Release Time: 20/07/2021)
-    - Use Beam Search for better-generating words Release Time: 03/08/2021)
+    - Use Beam Search for better-generating words (Release Time: 03/08/2021)
     - Set up Typing weights mode (Release Time: 17/08/2021)
 
 ### V. Feedback
