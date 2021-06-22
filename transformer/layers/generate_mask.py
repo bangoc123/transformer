@@ -3,6 +3,7 @@ import tensorflow as tf
 
 def generate_padding_mask(inp):
     # TODO: Update document
+    
     result = tf.cast(inp == 0, dtype=tf.float32)[:, np.newaxis, np.newaxis, :]
     return result
 

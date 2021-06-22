@@ -2,7 +2,7 @@ import tensorflow as tf
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
 
 def loss_function(real, pred):
-    print('-------)))---->', real, pred)
+    # TODO: Update document
     mask = tf.math.logical_not(real == 0)
     loss = loss_object(real, pred)
 

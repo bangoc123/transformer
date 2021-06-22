@@ -1,6 +1,22 @@
 __pycache__
 
-*.en
-*.vi
+# *.en
+# *.vi
 *.txt
 
+saved_model/
+
+predict.py
+data/train/*.en
+data/train/*.vi
+data/test/*.en
+data/test/*.vi
+# ./data/
+
+saved_vocab/
+
+checkpoints/
+
+.vscode
+
+.pytest_cache

@@ -13,10 +13,13 @@ if __name__ == "__main__":
     parser.add_argument("--logdir", default="logs")
     home_dir = os.getcwd()
     # parser.add_argument("--weight-decay", default=1e-4, type=float)
-    parser.add_argument("--input-lang", default='en', type=str)
-    parser.add_argument("--target-lang", default='vi', type=str)
-    parser.add_argument("--input-path", default='{}/data/train/train.en'.format(home_dir), type=str)
-    parser.add_argument("--target-path", default='{}/data/train/train.vi'.format(home_dir), type=str)
+    parser.add_argument("--input-lang", default='en', type=str, required=True)
+    parser.add_argument("--target-lang", default='vi', type=str, required=True)
+    parser.add_argument("--input-path", default='{}/data/train/train.en'.format(home_dir), type=str, required=True)
+    parser.add_argument("--target-path", default='{}/data/train/train.vi'.format(home_dir), type=str, required=True)
+    parser.add_argument("--model-folder", default='{}/checkpoints/'.format(home_dir), type=str)
+    parser.add_argument("--vocab-folder", default='{}/saved_vocab/transformer/'.format(home_dir), type=str)
+    parser.add_argument("--checkpoint-folder", default='{}/checkpoints/'.format(home_dir), type=str)
     parser.add_argument("--buffer-size", default=64, type=str)
     parser.add_argument("--batch-size", default=64, type=int)
     parser.add_argument("--epochs", default=1000, type=int)
@@ -43,16 +46,10 @@ if __name__ == "__main__":
     print('===========================')
 
 
-    nmtdataset = NMTDataset(args.input_lang, args.target_lang)
+    nmtdataset = NMTDataset(args.input_lang, args.target_lang, args.vocab_folder)
     train_dataset, val_dataset = nmtdataset.build_dataset(args.input_path, args.target_path, args.buffer_size, args.batch_size, args.max_length, args.num_examples)
 
     inp_tokenizer, targ_tokenizer = nmtdataset.inp_tokenizer, nmtdataset.targ_tokenizer
-
-    sample_string = 'The science behind a climate headline'
-
-    tokenized_string = inp_tokenizer.texts_to_sequences([nmtdataset.preprocess_sentence(sample_string, args.max_length)])
-
-    print(tokenized_string)
 
     # Create custom Optimizer
     lrate = CustomLearningRate(args.d_model)
@@ -62,6 +59,17 @@ if __name__ == "__main__":
     inp_vocab_size = len(inp_tokenizer.word_counts) + 2
     targ_vocab_size = len(inp_tokenizer.word_counts) + 2
 
+    # Set checkpoint
+
+    checkpoint_filepath = args.checkpoint_folder
+
+    model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+        filepath=checkpoint_filepath,
+        save_weights_only=True,
+        mode='max',
+        monitor='acc',
+        save_best_only=True)
+
     # Initializing model
     transformer = Transformer(  
         args.n, 
@@ -70,7 +78,10 @@ if __name__ == "__main__":
         targ_vocab_size, 
         args.d_model, 
         args.d_ff, 
-        args.activation
+        args.activation,
+        args.dropout_rate,
+        args.eps
+
     )
     transformer.compile(
         optimizer = optimizer,
@@ -79,5 +90,8 @@ if __name__ == "__main__":
 
     # Training model
     transformer.fit(
-        train_dataset.take(1), epochs=args.epochs,
+        train_dataset, epochs=args.epochs, callbacks=[model_checkpoint_callback]
     )
+
+    # Saving model
+    # transformer.save_weights(args.model_folder)

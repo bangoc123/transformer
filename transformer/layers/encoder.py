@@ -21,6 +21,10 @@ class Encoder(tf.keras.layers.Layer):
             x: tensor
 				- input sentence
                 - shape: (..., q_length)
+			is_train: bool
+				- is training or not
+			mask: tensor
+				- masking for token 0
 			Returns
             ----------
             encoder_out: tensor
