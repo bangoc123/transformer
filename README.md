@@ -62,15 +62,15 @@ Example: You want to build English-Vietnamese machine translation in 1000 epochs
 
 
 ```bash
-python train.py --epochs 10 --input-lang en --target-lang vi --input-path ./data/mock/train.en --target-path ./data/mock/train.vi
+python train.py --epochs 10 --input-lang en --target-lang vi --input-path ./data/mock/train.en --target-path ./data/mock/train.en
 ```
 
 There are some `important` arguments for the script you should consider when running it:
 
 - `input-lang`: The name of the input language (E.g. en)
 - `target-lang`: The name of the target language (E.g. vi)
-- `input-path`: The path of the input text file (E.g. ./data/train/en.txt)
-- `target-path`: The path of the output text file (E.g. ./data/train/vi.txt)
+- `input-path`: The path of the input text file (E.g. ./data/mock/train.en)
+- `target-path`: The path of the output text file (E.g. ./data/mock/train.vi)
 - `model-folder`: Saved model path
 - `vocab-folder`: Saved tokenizer + vocab path
 - `batch-size`: The batch size of the dataset
