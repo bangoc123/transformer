@@ -24,7 +24,7 @@ class Encoder(tf.keras.layers.Layer):
 			is_train: bool
 				- is training or not
 			mask: tensor
-				- masking for token 0
+				- masking
 			Returns
             ----------
             encoder_out: tensor
