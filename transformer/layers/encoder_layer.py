@@ -19,18 +19,18 @@ class EncoderLayer(tf.keras.layers.Layer):
 			Parameters
 			----------
 			x: tensor
-				- query
-				- shape: (..., q_length, d_model)
-				- x has d_model to create skip connection with output
+				query
+				shape: (..., q_length, d_model)
+				x has d_model to create skip connection with output
 			is_train: bool
-				- is training or not
+				is training or not
 			mask: tensor
-				- masking for token 0
+				masking for token 0
 			Returns
             ----------
 			out: tensor
-				- the new representation of query by attention between each word
-				- shape: (..., q_length, d_model)
+				the new representation of query by attention between each word
+				shape: (..., q_length, d_model)
 		"""
 		q = x
 

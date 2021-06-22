@@ -12,7 +12,7 @@ pkg_dir, _ = os.path.split(__file__)
 _TESTDATA = os.path.join(pkg_dir, "test_data")
 
 nmtdataset = NMTDataset(
-    'en','vi'
+    'en','vi', './'
 )
 
 max_length = 10

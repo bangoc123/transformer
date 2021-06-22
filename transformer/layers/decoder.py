@@ -20,26 +20,26 @@ class Decoder(tf.keras.layers.Layer):
 			Parameters
 			----------
 			q: tensor
-				- target sentence
-				- shape: (..., q_length)
+				target sentence
+				shape: (..., q_length)
 			encoder_out: tensor
-				- output of encoder
-				- shape: (..., k_length, d_model)
+				output of encoder
+				shape: (..., k_length, d_model)
 			Returns
             ----------
 			decoder_out: tensor
-				- the new representation of sentence by self attention between target words
+				the new representation of sentence by self attention between target words
 				and attention with input words
-				- shape: (..., q_length, d_model)
+				shape: (..., q_length, d_model)
 			attentionWeights: dict
-				- key: decoder_layer_{$layer_index}_self_attn_weights
-					- value: tensor 
-						- self_attn_weights
-						- shape: (..., q_length, q_length)
-				- key: decoder_layer_{$layer_index}_global_attn_weights
-					- value: tensor
-						- global_attn_weights
-						- shape: (..., q_length, k_length)
+				key: decoder_layer_{$layer_index}_self_attn_weights
+					value: tensor 
+						self_attn_weights
+						shape: (..., q_length, q_length)
+				key: decoder_layer_{$layer_index}_global_attn_weights
+					value: tensor
+						global_attn_weights
+						shape: (..., q_length, k_length)
 		"""
 		q_length = q.shape[1]
 		

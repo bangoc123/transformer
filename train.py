@@ -6,6 +6,7 @@ from data import NMTDataset
 from transformer.model import Transformer
 from transformer.optimizer import CustomLearningRate
 from transformer.loss import loss_function
+from trainer import Trainer
 logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch-size", default=64, type=int)
     parser.add_argument("--epochs", default=1000, type=int)
     parser.add_argument("--max-length", default=40, type=int)
-    parser.add_argument("--num-examples", default=300, type=int)
+    parser.add_argument("--num-examples", default=1000000, type=int)
     parser.add_argument("--d-model", default=512, type=int)
     parser.add_argument("--n", default=6, type=int)
     parser.add_argument("--h", default=8, type=int)
@@ -56,8 +57,8 @@ if __name__ == "__main__":
     
     optimizer = tf.keras.optimizers.Adam(lrate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
-    inp_vocab_size = len(inp_tokenizer.word_counts) + 2
-    targ_vocab_size = len(inp_tokenizer.word_counts) + 2
+    inp_vocab_size = len(inp_tokenizer.word_counts) + 1
+    targ_vocab_size = len(inp_tokenizer.word_counts) + 1
 
     # Set checkpoint
 
@@ -83,15 +84,11 @@ if __name__ == "__main__":
         args.eps
 
     )
-    transformer.compile(
-        optimizer = optimizer,
-        loss_fn=tf.keras.losses.BinaryCrossentropy(from_logits=True)
-    )
+
+    trainer = Trainer(transformer, optimizer, args.epochs)
 
     # Training model
-    transformer.fit(
-        train_dataset, epochs=args.epochs, callbacks=[model_checkpoint_callback]
-    )
-
+    trainer.fit(train_dataset)
+    
     # Saving model
     # transformer.save_weights(args.model_folder)
