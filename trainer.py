@@ -2,12 +2,14 @@ from transformer.layers.generate_mask import generate_mask
 import tensorflow as tf
 
 class Trainer:
-	def __init__(self, model, optimizer, epochs):
+	def __init__(self, model, optimizer, epochs, checkpoint_folder):
 		self.model = model
 		self.optimizer = optimizer
 		self.epochs = epochs
 		self.train_loss = tf.keras.metrics.Mean(name='train_loss')
 		self.train_accuracy = tf.keras.metrics.Mean(name='train_accuracy')
+		self.checkpoint = tf.train.Checkpoint(model = self.model, optimizer = self.optimizer)
+		self.checkpoint_manager = tf.train.CheckpointManager(self.checkpoint, checkpoint_folder, max_to_keep=3)
 
 	def cal_acc(self, real, pred):
 		accuracies = tf.equal(real, tf.argmax(pred, axis=2))
@@ -51,6 +53,13 @@ class Trainer:
 		# return {"loss": self.train_loss.result(), "acc": self.train_accuracy.result()}
 
 	def fit(self, data):
+		print('=============Training Progress================')
+		print('----------------Begin--------------------')
+		# Loading checkpoint
+		if self.checkpoint_manager.latest_checkpoint:
+			self.checkpoint.restore(self.checkpoint_manager.latest_checkpoint)
+			print('Restored checkpoint manager !')
+
 		for epoch in range(self.epochs):
 			self.train_loss.reset_states()
 			self.train_accuracy.reset_states()
@@ -60,3 +69,8 @@ class Trainer:
 
 				if batch % 50 == 0:
 					print(f'Epoch {epoch + 1} Batch {batch} Loss {self.train_loss.result():.3f} Accuracy {self.train_accuracy.result():.3f}')
+
+				if (epoch + 1) % 5 == 0:
+					saved_path = self.checkpoint_manager.save()
+					print('Checkpoint was saved at {}'.format(saved_path))
+		print('----------------Done--------------------')

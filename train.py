@@ -62,14 +62,7 @@ if __name__ == "__main__":
 
     # Set checkpoint
 
-    checkpoint_filepath = args.checkpoint_folder
-
-    model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        filepath=checkpoint_filepath,
-        save_weights_only=True,
-        mode='max',
-        monitor='acc',
-        save_best_only=True)
+    checkpoint_folder = args.checkpoint_folder
 
     # Initializing model
     transformer = Transformer(  
@@ -85,7 +78,7 @@ if __name__ == "__main__":
 
     )
 
-    trainer = Trainer(transformer, optimizer, args.epochs)
+    trainer = Trainer(transformer, optimizer, args.epochs, checkpoint_folder)
 
     # Training model
     trainer.fit(train_dataset)
