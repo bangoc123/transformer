@@ -8,9 +8,9 @@ class MultiHeadAttention(tf.keras.layers.Layer):
             Parameters
             ----------
             d_model: int
-                - the dimension of linear projection of q, k and v
+                the dimension of linear projection of q, k and v
             h: int
-                - the number of heads
+                the number of heads
 
 
         """
@@ -30,24 +30,24 @@ class MultiHeadAttention(tf.keras.layers.Layer):
             Parameters
             ----------
             q: tensor
-                - query
-                - shape: (..., q_length, d_k)
+                query
+                shape: (..., q_length, d_k)
             k: tensor
-                - key
-                - shape: (..., k_lengh, d_k)
+                key
+                shape: (..., k_lengh, d_k)
             v: tensor
-                - value
-                - shape: (..., v_length, d_v)
+                value
+                shape: (..., v_length, d_v)
             k_lengh = v_length
 
             Returns
             ----------
             attention_weights: tensor 
-                - Attention Scores between Query and Key
-                - shape: (..., q_length, k_lengh)
+                Attention Scores between Query and Key
+                shape: (..., q_length, k_lengh)
             out: tensor
-                - Attention Weights on Value
-                - shape: (..., q_length, k_lengh)
+                Attention Weights on Value
+                shape: (..., q_length, k_lengh)
         """
 
         dk = tf.cast(tf.shape(k)[-1], dtype=tf.float32)
@@ -69,13 +69,13 @@ class MultiHeadAttention(tf.keras.layers.Layer):
             Parameters
             ----------
             x: tensor
-                - query/key/value
-                - shape: (..., length, d_model)
+                query/key/value
+                shape: (..., length, d_model)
             Returns
             ----------
             xs: tensor
-                - splitted heads
-                - shape: (..., h, length, hd_v)
+                splitted heads
+                shape: (..., h, length, hd_v)
 
         """
         batch_size = tf.shape(x)[0]
@@ -100,24 +100,24 @@ class MultiHeadAttention(tf.keras.layers.Layer):
             Parameters
             ----------
             q: tensor
-                - query
-                - shape: (..., q_length, d_k)
+                query
+                shape: (..., q_length, d_k)
             k: tensor
-                - key
-                - shape: (..., k_lengh, d_k)
+                key
+                shape: (..., k_lengh, d_k)
             v: tensor
-                - value
-                - shape: (..., v_length, d_v)
+                value
+                shape: (..., v_length, d_v)
             k_lengh = v_length
 
             Returns
             ----------
             attention_weights: tensor 
-                - Attention Scores between Query and Key
-                - shape: (..., q_length, k_lengh)
+                Attention Scores between Query and Key
+                shape: (..., q_length, k_lengh)
             out: tensor
-                - Attention Weights on Value
-                - shape: (..., q_length, k_lengh)
+                Attention Weights on Value
+                shape: (..., q_length, k_lengh)
         """
 
         batch_size = tf.shape(q)[0]

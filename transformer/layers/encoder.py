@@ -19,17 +19,17 @@ class Encoder(tf.keras.layers.Layer):
             Parameters
             ----------
             x: tensor
-				- input sentence
-                - shape: (..., q_length)
+				input sentence
+                shape: (..., q_length)
 			is_train: bool
-				- is training or not
+				is training or not
 			mask: tensor
-				- masking
+				masking
 			Returns
             ----------
             encoder_out: tensor
-                - the new representation of sentence by attention between its words
-				- shape: (..., q_length, d_model)
+                the new representation of sentence by attention between its words
+				shape: (..., q_length, d_model)
         """
 		q_length = q.shape[1]
 		

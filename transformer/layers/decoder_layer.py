@@ -23,14 +23,14 @@ class DecoderLayer(tf.keras.layers.Layer):
 			Parameters
 			----------
 			q: tensor
-				- query
-				- shape: (..., q_length, d_model)
-				- x has d_model to create skip connection with output
+				query
+				shape: (..., q_length, d_model)
+				x has d_model to create skip connection with output
 			Returns
             ----------
 			out: tensor
-				- the new representation of query by attention between each word
-				- shape: (..., q_length, d_model)
+				the new representation of query by attention between each word
+				shape: (..., q_length, d_model)
 		"""
 		k = v = encoder_out
 
