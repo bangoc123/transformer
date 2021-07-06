@@ -103,7 +103,7 @@ if __name__ == "__main__":
     result = trainer.predict(encoder_input, decoder_input, False, args.max_length, end)
     
     final = targ_tokenizer.sequences_to_texts(result.numpy().tolist())
-    print('---------> result', " ".join(final[0].split()[1:]))
+    print('---------> result: ', " ".join(final[0].split()[1:]))
 
 
 

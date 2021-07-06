@@ -8,8 +8,6 @@ saved_model/
 
 data/train/*.en
 data/train/*.vi
-data/test/*.en
-data/test/*.vi
 # ./data/
 
 saved_vocab/
