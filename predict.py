@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("--logdir", default="logs")
     home_dir = os.getcwd()
     # parser.add_argument("--weight-decay", default=1e-4, type=float)
-    parser.add_argument("--test-path", default='{}/data/test/test.en'.format(home_dir), type=str)
+    parser.add_argument("--test-path", default='{}/data/mock/test.en'.format(home_dir), type=str)
     parser.add_argument("--input-lang", default='en', type=str)
     parser.add_argument("--target-lang", default='vi', type=str)
     parser.add_argument("--input-path", default='{}/data/train/train.en'.format(home_dir), type=str)
