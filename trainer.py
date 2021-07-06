@@ -74,3 +74,30 @@ class Trainer:
 					saved_path = self.checkpoint_manager.save()
 					print('Checkpoint was saved at {}'.format(saved_path))
 		print('----------------Done--------------------')
+
+	def predict(self, encoder_input, decoder_input, is_train, max_length, end_token):
+		print('=============Inference Progress================')
+		print('----------------Begin--------------------')
+		# Loading checkpoint
+		if self.checkpoint_manager.latest_checkpoint:
+			self.checkpoint.restore(self.checkpoint_manager.latest_checkpoint)
+			print('Restored checkpoint manager !')
+		
+		for i in range(max_length):
+
+			encoder_padding_mask, decoder_look_ahead_mask ,decoder_padding_mask = generate_mask(encoder_input, decoder_input)
+
+			preds = self.model(encoder_input, decoder_input, is_train, encoder_padding_mask, decoder_look_ahead_mask, decoder_padding_mask)
+			# print('---> preds', preds)
+
+			preds = preds[:, -1:, :]  # (batch_size, 1, vocab_size)
+
+			predicted_id = tf.argmax(preds, axis=-1)
+
+			decoder_input = tf.concat([decoder_input, predicted_id], axis=-1)
+
+			# return the result if the predicted_id is equal to the end token
+			if predicted_id == end_token:
+				break
+
+		return decoder_input

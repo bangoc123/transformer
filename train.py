@@ -18,7 +18,6 @@ if __name__ == "__main__":
     parser.add_argument("--target-lang", default='vi', type=str, required=True)
     parser.add_argument("--input-path", default='{}/data/train/train.en'.format(home_dir), type=str, required=True)
     parser.add_argument("--target-path", default='{}/data/train/train.vi'.format(home_dir), type=str, required=True)
-    parser.add_argument("--model-folder", default='{}/checkpoints/'.format(home_dir), type=str)
     parser.add_argument("--vocab-folder", default='{}/saved_vocab/transformer/'.format(home_dir), type=str)
     parser.add_argument("--checkpoint-folder", default='{}/checkpoints/'.format(home_dir), type=str)
     parser.add_argument("--buffer-size", default=64, type=str)
@@ -50,7 +49,7 @@ if __name__ == "__main__":
     nmtdataset = NMTDataset(args.input_lang, args.target_lang, args.vocab_folder)
     train_dataset, val_dataset = nmtdataset.build_dataset(args.input_path, args.target_path, args.buffer_size, args.batch_size, args.max_length, args.num_examples)
 
-    inp_tokenizer, targ_tokenizer = nmtdataset.inp_tokenizer, nmtdataset.targ_tokenizer
+    inp_tokenizer, target_tokenizer = nmtdataset.inp_tokenizer, nmtdataset.target_tokenizer
 
     # Create custom Optimizer
     lrate = CustomLearningRate(args.d_model)
@@ -58,7 +57,7 @@ if __name__ == "__main__":
     optimizer = tf.keras.optimizers.Adam(lrate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
     inp_vocab_size = len(inp_tokenizer.word_counts) + 1
-    targ_vocab_size = len(inp_tokenizer.word_counts) + 1
+    targ_vocab_size = len(target_tokenizer.word_counts) + 1
 
     # Set checkpoint
 
