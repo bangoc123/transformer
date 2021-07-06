@@ -6,7 +6,6 @@ __pycache__
 
 saved_model/
 
-predict.py
 data/train/*.en
 data/train/*.vi
 data/test/*.en

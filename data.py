@@ -13,20 +13,20 @@ class NMTDataset:
     self.targ_lang = targ_lang
     self.vocab_folder = vocab_folder
     self.inp_tokenizer_path = '{}{}_tokenizer.pickle'.format(self.vocab_folder, self.inp_lang)
-    self.target_tokenizer_path = '{}{}_tokenizer.pickle'.format(self.vocab_folder, self.targ_lang)
+    self.targ_tokenizer_path = '{}{}_tokenizer.pickle'.format(self.vocab_folder, self.targ_lang)
     
     self.inp_tokenizer = None
-    self.target_tokenizer = None
+    self.targ_tokenizer = None
 
     if os.path.isfile(self.inp_tokenizer_path):
       # Loading tokenizer
       with open(self.inp_tokenizer_path, 'rb') as handle:
         self.inp_tokenizer = pickle.load(handle)
 
-    if os.path.isfile(self.target_tokenizer_path):
+    if os.path.isfile(self.targ_tokenizer_path):
       # Loading tokenizer
-      with open(self.target_tokenizer_path, 'rb') as handle:
-        self.target_tokenizer = pickle.load(handle)
+      with open(self.targ_tokenizer_path, 'rb') as handle:
+        self.targ_tokenizer = pickle.load(handle)
 
 
   def preprocess_sentence(self, w, max_length):
@@ -85,8 +85,8 @@ class NMTDataset:
     self.inp_tokenizer = self.build_tokenizer(self.inp_tokenizer, inp_lines)
     inp_tensor = self.tokenize(self.inp_tokenizer, inp_lines, max_length)
 
-    self.targ_tokenizer = self.build_tokenizer(self.target_tokenizer, targ_lines)
-    targ_tensor = self.tokenize(self.target_tokenizer, targ_lines, max_length)
+    self.targ_tokenizer = self.build_tokenizer(self.targ_tokenizer, targ_lines)
+    targ_tensor = self.tokenize(self.targ_tokenizer, targ_lines, max_length)
 
     # Saving Tokenizer
     print('=============Saving Tokenizer================')
@@ -101,7 +101,7 @@ class NMTDataset:
     with open(self.inp_tokenizer_path, 'wb') as handle:
       pickle.dump(self.inp_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open(self.target_tokenizer_path, 'wb') as handle:
+    with open(self.targ_tokenizer_path, 'wb') as handle:
       pickle.dump(self.targ_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     print('Done!!!')
