@@ -6,10 +6,10 @@ from data import NMTDataset
 from transformer.model import Transformer
 from transformer.optimizer import CustomLearningRate
 from transformer.loss import loss_function
-from trainer import Trainer
 import io
 from constant import *
 logging.basicConfig(level=logging.DEBUG)
+from transformer.layers.generate_mask import generate_mask
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -83,7 +83,6 @@ if __name__ == "__main__":
 
     checkpoint_folder = args.checkpoint_folder
 
-    print(args.n, args.h, inp_vocab_size, targ_vocab_size, args.d_model, args.d_ff, args.activation, args.dropout_rate, args.eps)
     # Initializing model
     transformer = Transformer(  
         args.n, 
@@ -100,10 +99,26 @@ if __name__ == "__main__":
 
     # Prepare a directory to store all the checkpoints.
     checkpoint = tf.train.Checkpoint(model = transformer, optimizer = optimizer)
-    checkpoint_manager = tf.train.CheckpointManager(checkpoint, checkpoint_folder, max_to_keep=1)
-
-    if checkpoint_manager.latest_checkpoint:
-        checkpoint.restore(checkpoint_manager.latest_checkpoint)
-        print('Restored checkpoint manager !')
-
     
+    status = checkpoint.restore(checkpoint_folder)
+    
+
+    for i in range(args.max_length):
+
+        encoder_padding_mask, decoder_look_ahead_mask ,decoder_padding_mask = generate_mask(encoder_input, decoder_input)
+        
+        in_data = (encoder_input, decoder_input, False, encoder_padding_mask, decoder_look_ahead_mask, decoder_padding_mask)
+
+        preds = transformer(in_data, False)
+
+        preds = preds[:, -1:, :]  # (batch_size, 1, vocab_size)
+
+        predicted_id = tf.argmax(preds, axis=-1)
+
+        decoder_input = tf.concat([decoder_input, predicted_id], axis=-1)
+
+        # return the result if the predicted_id is equal to the end token
+        if predicted_id == end:
+            break
+    final = targ_tokenizer.sequences_to_texts(decoder_input.numpy().tolist())
+    print('---------> result: ', " ".join(final[0].split()[1:]))

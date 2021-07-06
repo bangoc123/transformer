@@ -104,3 +104,5 @@ if __name__ == "__main__":
     transformer.fit(
         train_dataset, epochs=args.epochs, validation_data=val_dataset, callbacks=[cp_callback],
     )
+
+    checkpoint = tf.train.Checkpoint(model = transformer, optimizer = optimizer)
