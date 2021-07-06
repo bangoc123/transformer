@@ -6,11 +6,8 @@ __pycache__
 
 saved_model/
 
-predict.py
 data/train/*.en
 data/train/*.vi
-data/test/*.en
-data/test/*.vi
 # ./data/
 
 saved_vocab/

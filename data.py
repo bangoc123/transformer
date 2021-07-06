@@ -1,6 +1,5 @@
 import io
 import numpy as np
-import unicodedata
 import tensorflow as tf
 import re
 import os
@@ -12,9 +11,23 @@ class NMTDataset:
   def __init__(self, inp_lang, targ_lang, vocab_folder):
     self.inp_lang = inp_lang
     self.targ_lang = targ_lang
-    self.inp_tokenizer = None
-    self.target_tokenizer = None
     self.vocab_folder = vocab_folder
+    self.inp_tokenizer_path = '{}{}_tokenizer.pickle'.format(self.vocab_folder, self.inp_lang)
+    self.targ_tokenizer_path = '{}{}_tokenizer.pickle'.format(self.vocab_folder, self.targ_lang)
+    
+    self.inp_tokenizer = None
+    self.targ_tokenizer = None
+
+    if os.path.isfile(self.inp_tokenizer_path):
+      # Loading tokenizer
+      with open(self.inp_tokenizer_path, 'rb') as handle:
+        self.inp_tokenizer = pickle.load(handle)
+
+    if os.path.isfile(self.targ_tokenizer_path):
+      # Loading tokenizer
+      with open(self.targ_tokenizer_path, 'rb') as handle:
+        self.targ_tokenizer = pickle.load(handle)
+
 
   def preprocess_sentence(self, w, max_length):
     w = w.lower().strip()
@@ -28,16 +41,21 @@ class NMTDataset:
     w = '{} {} {}'.format(BOS, w, EOS)
     return w
 
-  def tokenize(self, lang, max_length):
+  def build_tokenizer(self, lang_tokenizer, lang):
     # TODO: Update document
-    lang_tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='')
+    if not lang_tokenizer:
+      lang_tokenizer = tf.keras.preprocessing.text.Tokenizer(filters='')
+
     lang_tokenizer.fit_on_texts(lang)
+    return lang_tokenizer
 
+  def tokenize(self, lang_tokenizer, lang, max_length):
+    # TODO: Update document
     # Padding
-
     tensor = lang_tokenizer.texts_to_sequences(lang)
     tensor = tf.keras.preprocessing.sequence.pad_sequences(tensor, padding='post', maxlen=max_length)
-    return tensor, lang_tokenizer
+    return tensor
+
 
   def display_samples(self, num_of_pairs, inp_lines, targ_lines):
     # TODO: Update document
@@ -64,9 +82,11 @@ class NMTDataset:
     self.display_samples(3, inp_lines, targ_lines)
     
     # Tokenizing
-    inp_tensor, inp_tokenizer = self.tokenize(inp_lines, max_length)
-    targ_tensor, targ_tokenizer = self.tokenize(targ_lines, max_length)
+    self.inp_tokenizer = self.build_tokenizer(self.inp_tokenizer, inp_lines)
+    inp_tensor = self.tokenize(self.inp_tokenizer, inp_lines, max_length)
 
+    self.targ_tokenizer = self.build_tokenizer(self.targ_tokenizer, targ_lines)
+    targ_tensor = self.tokenize(self.targ_tokenizer, targ_lines, max_length)
 
     # Saving Tokenizer
     print('=============Saving Tokenizer================')
@@ -75,23 +95,23 @@ class NMTDataset:
     if not os.path.exists(self.vocab_folder):
       try:
         os.makedirs(self.vocab_folder)
-      except OSError as exc: 
+      except OSError as e: 
         raise IOError("Failed to create folders")
 
-    with open('{}{}_tokenizer.pickle'.format(self.vocab_folder, self.inp_lang), 'wb') as handle:
-      pickle.dump(inp_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open(self.inp_tokenizer_path, 'wb') as handle:
+      pickle.dump(self.inp_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open('{}{}_tokenizer.pickle'.format(self.vocab_folder, self.targ_lang), 'wb') as handle:
-      pickle.dump(targ_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open(self.targ_tokenizer_path, 'wb') as handle:
+      pickle.dump(self.targ_tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     print('Done!!!')
 
-    return inp_tensor, targ_tensor, inp_tokenizer, targ_tokenizer
+    return inp_tensor, targ_tensor
 
   def build_dataset(self, inp_path, targ_path, buffer_size, batch_size, max_length, num_examples):
     # TODO: Update document
 
-    inp_tensor, targ_tensor, self.inp_tokenizer, self.targ_tokenizer = self.load_dataset(inp_path, targ_path, max_length, num_examples)
+    inp_tensor, targ_tensor = self.load_dataset(inp_path, targ_path, max_length, num_examples)
 
     inp_tensor_train, inp_tensor_val, targ_tensor_train, targ_tensor_val = train_test_split(inp_tensor, targ_tensor, test_size=0.2)
 
@@ -104,5 +124,6 @@ class NMTDataset:
     val_dataset = val_dataset.shuffle(buffer_size).batch(batch_size)
 
     return train_dataset, val_dataset
+
 
 
