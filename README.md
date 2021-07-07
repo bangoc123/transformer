@@ -88,7 +88,7 @@ After training successfully, your model will be saved to `model-folder` defined 
 
 ### IV. TODO
 
-- Bugs Fix:
+- ~~Bugs Fix~~:
 
     In this project, you can see that we try to compile all the pipeline into `tf.keras.Model` class in `model.py` file and using `fit function `to train the model. Unfortunately, there are few critical bugs we need to fix for a new release.
 
@@ -96,7 +96,7 @@ After training successfully, your model will be saved to `model-folder` defined 
 
 - New Features:
 
-    - Reading files Pipeline (Release Time: 06/07/2021)
+    - ~~Reading files Pipeline (Release Time: 06/07/2021)~~
     - Adapting BPE, Subwords Tokenizer (Release Time: 20/07/2021)
     - Use Beam Search for better-generating words (Release Time: 03/08/2021)
     - Set up Typing weights mode (Release Time: 17/08/2021)
