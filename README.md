@@ -83,6 +83,8 @@ There are some `important` arguments for the script you should consider when run
 - `activation`: The activation of Position-wise Feed-Forward Networks. If we want to experiment `GELU` instead of `RELU`, which activation was wisely used recently.
 - `dropout-rate`. Dropout rate of any Layer. Transformer-Base sets it to 0.1
 - `eps`. Layer Norm parameter. Default value: 0.1
+- `n-grams`. The longest correct sentence when predicted. Default value: 3
+- `use-bleu`. bool values. It's using to evaluate NLP model ([More](https://aclanthology.org/P02-1040.pdf))
 
 After training successfully, your model will be saved to `model-folder` defined before
 

@@ -2,11 +2,15 @@ import os
 from argparse import ArgumentParser
 import tensorflow as tf
 import logging
+
+from constant import BOS, EOS
 from data import NMTDataset
+from metrics import Evaluate
 from transformer.model import Transformer
 from transformer.optimizer import CustomLearningRate
 from transformer.loss import loss_function
 from trainer import Trainer
+
 logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
@@ -32,6 +36,8 @@ if __name__ == "__main__":
     parser.add_argument("--activation", default='relu', type=str)
     parser.add_argument("--dropout-rate", default=0.1, type=float)
     parser.add_argument("--eps", default=0.1, type=float)
+    parser.add_argument("--n-grams", default=3, type=int)
+    parser.add_argument("--use-bleu", default=False, type=bool)
 
     args = parser.parse_args()
 
@@ -45,15 +51,15 @@ if __name__ == "__main__":
         print('{}.{}: {}'.format(i, arg, vars(args)[arg]))
     print('===========================')
 
-
     nmtdataset = NMTDataset(args.input_lang, args.target_lang, args.vocab_folder)
-    train_dataset, val_dataset = nmtdataset.build_dataset(args.input_path, args.target_path, args.buffer_size, args.batch_size, args.max_length, args.num_examples)
+    train_dataset, val_dataset = nmtdataset.build_dataset(args.input_path, args.target_path, args.buffer_size,
+                                                          args.batch_size, args.max_length, args.num_examples)
 
     inp_tokenizer, targ_tokenizer = nmtdataset.inp_tokenizer, nmtdataset.targ_tokenizer
 
     # Create custom Optimizer
     lrate = CustomLearningRate(args.d_model)
-    
+
     optimizer = tf.keras.optimizers.Adam(lrate, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
     inp_vocab_size = len(inp_tokenizer.word_counts) + 1
@@ -64,23 +70,28 @@ if __name__ == "__main__":
     checkpoint_folder = args.checkpoint_folder
 
     # Initializing model
-    transformer = Transformer(  
-        args.n, 
-        args.h, 
-        inp_vocab_size, 
-        targ_vocab_size, 
-        args.d_model, 
-        args.d_ff, 
+    transformer = Transformer(
+        args.n,
+        args.h,
+        inp_vocab_size,
+        targ_vocab_size,
+        args.d_model,
+        args.d_ff,
         args.activation,
         args.dropout_rate,
         args.eps
 
     )
 
+    # Initialize evaluation
+    evaluate = None
+    if args.use_bleu:
+        evaluate = Evaluate(args.max_length, inp_tokenizer, targ_tokenizer, n_grams=args.n_grams)
+
     trainer = Trainer(transformer, optimizer, args.epochs, checkpoint_folder)
 
     # Training model
-    trainer.fit(train_dataset)
-    
+    trainer.fit(train_dataset, val_dataset, evaluate)
+
     # Saving model
     # transformer.save_weights(args.model_folder)
