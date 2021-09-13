@@ -77,10 +77,32 @@ if __name__ == "__main__":
 
     )
 
-    trainer = Trainer(transformer, optimizer, args.epochs, checkpoint_folder)
+    # trainer = Trainer(transformer, optimizer, args.epochs, checkpoint_folder)
 
     # Training model
-    trainer.fit(train_dataset)
+    # trainer.fit(train_dataset)
     
     # Saving model
     # transformer.save_weights(args.model_folder)
+
+
+    # Using Transformer Fit
+    transformer.compile(
+        optimizer = optimizer,
+        loss_fn=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True, reduction='none')
+    )
+
+    # Creat Checkpoint: saves the model's weights every 2 epochs
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(
+        filepath=checkpoint_folder, 
+        verbose=1, 
+        save_weights_only=True,
+        save_freq='epoch',
+        monitor="val_acc")
+
+
+    transformer.fit(
+        train_dataset, epochs=args.epochs, validation_data=val_dataset, callbacks=[cp_callback],
+    )
+
+    checkpoint = tf.train.Checkpoint(model = transformer, optimizer = optimizer)
