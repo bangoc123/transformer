@@ -52,7 +52,7 @@ class Trainer:
 
 		# return {"loss": self.train_loss.result(), "acc": self.train_accuracy.result()}
 
-	def fit(self, data):
+	def fit(self, data, val_data=None, evaluation=None):
 		print('=============Training Progress================')
 		print('----------------Begin--------------------')
 		# Loading checkpoint
@@ -61,18 +61,25 @@ class Trainer:
 			print('Restored checkpoint manager !')
 
 		for epoch in range(self.epochs):
+			score = 0
 			self.train_loss.reset_states()
 			self.train_accuracy.reset_states()
-			
+
 			for (batch, (inp, tar)) in enumerate(data):
 				self.train_step(inp, tar)
 
 				if batch % 50 == 0:
-					print(f'Epoch {epoch + 1} Batch {batch} Loss {self.train_loss.result():.3f} Accuracy {self.train_accuracy.result():.3f}')
+					print(f'\nEpoch {epoch + 1} Batch {batch} Loss {self.train_loss.result():.3f} Accuracy {self.train_accuracy.result():.3f}', end="")
 
-				if (epoch + 1) % 5 == 0:
-					saved_path = self.checkpoint_manager.save()
-					print('Checkpoint was saved at {}'.format(saved_path))
+			if evaluation is not None and evaluation is not None:
+				for batch, (val_inps, val_tars) in enumerate(val_data):
+					score += evaluation(self.model, val_inps, val_tars)
+				print(f" Blue_score: {round(score/len(val_data), 4)}")
+
+			if (epoch + 1) % 5 == 0:
+				saved_path = self.checkpoint_manager.save()
+				print('\nCheckpoint was saved at {}'.format(saved_path))
+
 		print('----------------Done--------------------')
 
 	def predict(self, encoder_input, decoder_input, is_train, max_length, end_token):
@@ -82,7 +89,7 @@ class Trainer:
 		if self.checkpoint_manager.latest_checkpoint:
 			self.checkpoint.restore(self.checkpoint_manager.latest_checkpoint)
 			print('Restored checkpoint manager !')
-		
+
 		for i in range(max_length):
 
 			encoder_padding_mask, decoder_look_ahead_mask ,decoder_padding_mask = generate_mask(encoder_input, decoder_input)
